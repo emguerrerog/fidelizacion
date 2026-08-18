@@ -10,10 +10,13 @@ from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey
 from sqlalchemy.dialects.postgresql import BIT
 from sqlalchemy.orm import declarative_base, sessionmaker, Session, relationship
 
-#load_dotenv()
+#load_dotenv() # solo en local
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-BUSINESS_PASSWORD = os.getenv("ADMIN_PASSWORD")
+#DATABASE_URL = os.getenv("DATABASE_URL")
+#BUSINESS_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+BUSINESS_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
 if not DATABASE_URL or not BUSINESS_PASSWORD:
     raise RuntimeError("Faltan variables de entorno en el archivo .env")
