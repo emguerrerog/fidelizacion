@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey
 from sqlalchemy.dialects.postgresql import BIT
 from sqlalchemy.orm import declarative_base, sessionmaker, Session, relationship
 
-load_dotenv()
+#load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 BUSINESS_PASSWORD = os.getenv("ADMIN_PASSWORD")
