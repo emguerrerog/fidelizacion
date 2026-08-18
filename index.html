@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cumbre - Fidelización</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen">
+
+  <header class="bg-amber-900 text-amber-50 p-4 shadow-md">
+    <div class="max-w-4xl mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Cumbre | Fidelización</h1>
+      <nav class="space-x-2">
+        <button onclick="switchTab('cliente')" id="btn-tab-cliente" class="px-4 py-2 rounded bg-amber-700 hover:bg-amber-600 font-semibold">Cliente</button>
+        <button onclick="switchTab('negocio')" id="btn-tab-negocio" class="px-4 py-2 rounded bg-amber-800 hover:bg-amber-600">Gestión Negocio</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto mt-8 p-4">
+
+    <!-- SECCIÓN CLIENTE -->
+    <section id="section-cliente" class="space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+        <h2 class="text-xl font-bold mb-4">Consulta de Puntos</h2>
+        <div class="flex gap-2">
+          <input type="email" id="search-email" placeholder="Ingresa tu correo electrónico" class="flex-1 border p-2 rounded border-stone-300 focus:outline-amber-700">
+          <button onclick="consultarCliente()" class="bg-amber-800 text-white px-6 py-2 rounded hover:bg-amber-700">Buscar</button>
+        </div>
+      </div>
+
+      <!-- Detalle Cliente -->
+      <div id="client-info" class="hidden bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+        <h3 id="client-name" class="text-2xl font-bold text-amber-900 mb-2"></h3>
+        
+        <div class="grid grid-cols-2 gap-4 my-4">
+          <div class="bg-amber-50 border border-amber-200 p-4 rounded text-center">
+            <span class="block text-3xl font-extrabold text-amber-900" id="pts-disp">0</span>
+            <span class="text-xs uppercase text-amber-800 font-bold">Puntos Disponibles</span>
+          </div>
+          <div class="bg-stone-50 border border-stone-200 p-4 rounded text-center">
+            <span class="block text-3xl font-extrabold text-stone-600" id="pts-usados">0</span>
+            <span class="text-xs uppercase text-stone-500 font-bold">Puntos Usados</span>
+          </div>
+        </div>
+
+        <h4 class="font-bold text-lg mt-6 mb-2">Historial de Premios Reclamados</h4>
+        <ul id="premios-list" class="divide-y divide-stone-200 border rounded">
+          <li class="p-3 text-sm text-stone-500">No has reclamado premios aún.</li>
+        </ul>
+      </div>
+
+      <!-- Registro Cliente -->
+      <div id="client-register" class="hidden bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+        <h3 class="text-xl font-bold mb-2 text-stone-700">No encontramos tu correo. ¡Regístrate!</h3>
+        <form onsubmit="registrarCliente(event)" class="space-y-4 mt-4">
+          <div>
+            <label class="block text-sm font-semibold">Nombre Completo *</label>
+            <input type="text" id="reg-nombre" required class="w-full border p-2 rounded">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold">Correo Electrónico *</label>
+            <input type="email" id="reg-email" required class="w-full border p-2 rounded">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold">Celular</label>
+              <input type="tel" id="reg-celular" maxlength="10" class="w-full border p-2 rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold">Instagram</label>
+              <input type="text" id="reg-instagram" class="w-full border p-2 rounded">
+            </div>
+          </div>
+          <div class="space-y-2 pt-2">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="reg-habeas" required>
+              <span class="text-sm">Acepto la firma y tratamiento de datos personales *</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="reg-contacto">
+              <span class="text-sm">Deseo recibir promociones e información de contacto</span>
+            </label>
+          </div>
+          <button type="submit" class="w-full bg-emerald-700 text-white py-2 rounded hover:bg-emerald-600 font-bold">Registrarme</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SECCIÓN NEGOCIO -->
+    <section id="section-negocio" class="hidden space-y-6">
+      
+      <!-- Buscar / Administrar Cliente -->
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+        <h2 class="text-xl font-bold mb-4 text-stone-800">Administración de Cliente</h2>
+        <div class="flex gap-2 mb-4">
+          <input type="email" id="admin-email" placeholder="Correo del cliente" class="flex-1 border p-2 rounded">
+          <button onclick="cargarAdminCliente()" class="bg-stone-800 text-white px-6 py-2 rounded hover:bg-stone-700">Cargar Cliente</button>
+        </div>
+
+        <div id="admin-panel" class="hidden space-y-6 pt-4 border-t border-stone-200">
+          <div>
+            <h3 class="font-bold text-lg text-amber-900" id="admin-client-name"></h3>
+            <p class="text-sm text-stone-500">ID Cliente: <span id="admin-client-id"></span></p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase">Celular</label>
+              <input type="text" id="admin-celular" class="border p-2 w-full rounded">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase">Instagram</label>
+              <input type="text" id="admin-instagram" class="border p-2 w-full rounded">
+            </div>
+          </div>
+          <button onclick="guardarCambiosCliente()" class="bg-stone-700 text-white px-4 py-2 rounded text-sm hover:bg-stone-600">Guardar Cambios</button>
+
+          <div class="border-t pt-4">
+            <h4 class="font-bold mb-2">Sumar Puntos</h4>
+            <div class="flex gap-2">
+              <input type="number" id="puntos-cantidad" value="1" min="1" class="border p-2 rounded w-24">
+              <button onclick="sumarPuntos()" class="bg-amber-800 text-white px-4 py-2 rounded hover:bg-amber-700">+ Añadir Puntos</button>
+            </div>
+          </div>
+
+          <div class="border-t pt-4">
+            <h4 class="font-bold mb-2">Canjear Premio para Cliente</h4>
+            <div class="flex gap-2">
+              <select id="select-premios" class="flex-1 border p-2 rounded"></select>
+              <button onclick="redimirPremio()" class="bg-emerald-800 text-white px-4 py-2 rounded hover:bg-emerald-700">Canjear Premio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crear Premio en Catálogo -->
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+        <h2 class="text-xl font-bold mb-4 text-stone-800">Crear Nuevo Premio en Catálogo</h2>
+        <form onsubmit="crearPremioCatalogo(event)" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1">Nombre del Premio *</label>
+              <input type="text" id="cat-nombre" required placeholder="Ej. Café Americano Gratis" class="w-full border p-2 rounded">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1">Puntos Requeridos *</label>
+              <input type="number" id="cat-puntos" required min="1" value="5" class="w-full border p-2 rounded">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase mb-1">Descripción</label>
+            <input type="text" id="cat-desc" placeholder="Descripción breve del premio" class="w-full border p-2 rounded">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1">Fecha Inicio Vigencia *</label>
+              <input type="date" id="cat-inicio" required class="w-full border p-2 rounded">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1">Fecha Fin Vigencia *</label>
+              <input type="date" id="cat-fin" required class="w-full border p-2 rounded">
+            </div>
+          </div>
+          <button type="submit" class="bg-amber-800 text-white px-6 py-2 rounded font-bold hover:bg-amber-700">Guardar Premio</button>
+        </form>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const API = "http://localhost:8000/api";
+    let activeClientId = null;
+    let businessPassword = null;
+
+    function pedirPassword() {
+      if(!businessPassword) {
+        businessPassword = prompt("Ingresa la contraseña de negocio:");
+      }
+      return businessPassword;
+    }
+
+    function switchTab(tab) {
+      document.getElementById('section-cliente').classList.toggle('hidden', tab !== 'cliente');
+      document.getElementById('section-negocio').classList.toggle('hidden', tab !== 'negocio');
+      document.getElementById('btn-tab-cliente').className = tab === 'cliente' ? 'px-4 py-2 rounded bg-amber-700 hover:bg-amber-600 font-semibold' : 'px-4 py-2 rounded bg-amber-800 hover:bg-amber-600';
+      document.getElementById('btn-tab-negocio').className = tab === 'negocio' ? 'px-4 py-2 rounded bg-amber-700 hover:bg-amber-600 font-semibold' : 'px-4 py-2 rounded bg-amber-800 hover:bg-amber-600';
+      
+      // Auto-completar fechas del formulario con fecha de hoy y fin de año
+      if (tab === 'negocio') {
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('cat-inicio').value = hoy;
+        document.getElementById('cat-fin').value = `${new Date().getFullYear()}-12-31`;
+      }
+    }
+
+    async function consultarCliente() {
+      const email = document.getElementById('search-email').value.trim();
+      if(!email) return alert("Ingresa un correo");
+
+      try {
+        const res = await fetch(`${API}/cliente/consultar/${email}`);
+        const data = await res.json();
+
+        if(!data.registrado) {
+          document.getElementById('client-info').classList.add('hidden');
+          document.getElementById('client-register').classList.remove('hidden');
+          document.getElementById('reg-email').value = email;
+        } else {
+          document.getElementById('client-register').classList.add('hidden');
+          document.getElementById('client-info').classList.remove('hidden');
+          
+          document.getElementById('client-name').textContent = data.persona.nombre_completo;
+          document.getElementById('pts-disp').textContent = data.puntos_disponibles;
+          document.getElementById('pts-usados').textContent = data.puntos_reclamados;
+
+          const list = document.getElementById('premios-list');
+          list.innerHTML = data.premios_reclamados.length === 0 
+            ? '<li class="p-3 text-sm text-stone-500">No has reclamado premios aún.</li>'
+            : data.premios_reclamados.map(p => `<li class="p-3 text-sm flex justify-between"><span>${p.nombre}</span><span class="text-stone-400">${p.fecha_reclamo}</span></li>`).join('');
+        }
+      } catch (error) {
+        console.error("Error al consultar cliente:", error);
+        alert("No se pudo conectar con el servidor.");
+      }
+    }
+
+    async function registrarCliente(e) {
+      e.preventDefault();
+      
+      const emailVal = document.getElementById('reg-email').value.trim();
+      const payload = {
+        nombre_completo: document.getElementById('reg-nombre').value.trim(),
+        email: emailVal,
+        celular: document.getElementById('reg-celular').value.trim() || null,
+        instagram: document.getElementById('reg-instagram').value.trim() || null,
+        firma_tratamiento_atos: document.getElementById('reg-habeas').checked,
+        contactabilidad: document.getElementById('reg-contacto').checked
+      };
+
+      try {
+        const res = await fetch(`${API}/cliente/registrar`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if(res.ok) {
+          alert("¡Registro exitoso!");
+          document.getElementById('search-email').value = emailVal;
+          await consultarCliente();
+        } else {
+          alert(data.detail || "Error al registrar cliente");
+        }
+      } catch (error) {
+        alert("Error al conectar con el servidor backend.");
+      }
+    }
+
+    async function crearPremioCatalogo(e) {
+      e.preventDefault();
+      const pwd = pedirPassword();
+      if(!pwd) return;
+
+      const payload = {
+        nombre: document.getElementById('cat-nombre').value.trim(),
+        descripcion: document.getElementById('cat-desc').value.trim() || null,
+        puntos_requeridos: parseInt(document.getElementById('cat-puntos').value),
+        fecha_vigencia_inicio: document.getElementById('cat-inicio').value,
+        fecha_vigencia_fin: document.getElementById('cat-fin').value
+      };
+
+      try {
+        const res = await fetch(`${API}/negocio/catalogo`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-business-key': pwd
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if(res.ok) {
+          alert("Premio agregado al catálogo correctamente");
+          document.getElementById('cat-nombre').value = '';
+          document.getElementById('cat-desc').value = '';
+          if (activeClientId) await cargarCatalogoSelect();
+        } else {
+          const err = await res.json();
+          alert(err.detail || "Error al crear el premio");
+        }
+      } catch (error) {
+        alert("Error de conexión al guardar el premio");
+      }
+    }
+
+    async function cargarCatalogoSelect() {
+      const catRes = await fetch(`${API}/negocio/catalogo`, {
+        headers: {'x-business-key': businessPassword}
+      });
+      
+      if(!catRes.ok) {
+        alert("Contraseña de negocio incorrecta");
+        businessPassword = null;
+        return false;
+      }
+
+      const catalogo = await catRes.json();
+      const select = document.getElementById('select-premios');
+      if (catalogo.length === 0) {
+        select.innerHTML = '<option value="">No hay premios disponibles</option>';
+      } else {
+        select.innerHTML = catalogo.map(p => `<option value="${p.premio_catalogo_id}">${p.nombre} (${p.puntos_requeridos} pts)</option>`).join('');
+      }
+      return true;
+    }
+
+    async function cargarAdminCliente() {
+      const pwd = pedirPassword();
+      if(!pwd) return;
+
+      const email = document.getElementById('admin-email').value.trim();
+      try {
+        const res = await fetch(`${API}/cliente/consultar/${email}`);
+        const data = await res.json();
+
+        if(!data.registrado) {
+          alert("Cliente no encontrado.");
+          return;
+        }
+
+        activeClientId = data.persona.persona_id;
+        document.getElementById('admin-panel').classList.remove('hidden');
+        document.getElementById('admin-client-name').textContent = data.persona.nombre_completo;
+        document.getElementById('admin-client-id').textContent = activeClientId;
+        document.getElementById('admin-celular').value = data.persona.celular || '';
+        document.getElementById('admin-instagram').value = data.persona.instagram || '';
+
+        await cargarCatalogoSelect();
+      } catch (error) {
+        alert("Error al cargar la información del cliente.");
+      }
+    }
+
+    async function guardarCambiosCliente() {
+      const payload = {
+        celular: document.getElementById('admin-celular').value.trim() || null,
+        instagram: document.getElementById('admin-instagram').value.trim() || null
+      };
+      try {
+        const res = await fetch(`${API}/negocio/cliente/${activeClientId}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json', 'x-business-key': businessPassword},
+          body: JSON.stringify(payload)
+        });
+        if(res.ok) alert("Cliente actualizado");
+        else alert("Error al actualizar datos");
+      } catch (error) {
+        alert("Error de conexión al actualizar cliente");
+      }
+    }
+
+    async function sumarPuntos() {
+      const cantidad = parseInt(document.getElementById('puntos-cantidad').value);
+      try {
+        const res = await fetch(`${API}/negocio/cliente/${activeClientId}/puntos`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'x-business-key': businessPassword},
+          body: JSON.stringify({ cantidad })
+        });
+        if(res.ok) alert("Puntos sumados correctamente");
+        else alert("Error al sumar puntos");
+      } catch (error) {
+        alert("Error de conexión al sumar puntos");
+      }
+    }
+
+    async function redimirPremio() {
+      const select = document.getElementById('select-premios');
+      if (!select.value) return alert("Selecciona un premio válido");
+
+      const premio_catalogo_id = parseInt(select.value);
+      try {
+        const res = await fetch(`${API}/negocio/cliente/${activeClientId}/redimir`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'x-business-key': businessPassword},
+          body: JSON.stringify({ premio_catalogo_id })
+        });
+        
+        const data = await res.json();
+        if(res.ok) {
+          alert("Premio registrado exitosamente");
+        } else {
+          alert(data.detail || "Error al registrar premio");
+        }
+      } catch (error) {
+        alert("Error de conexión al redimir premio");
+      }
+    }
+  </script>
+</body>
+</html>
